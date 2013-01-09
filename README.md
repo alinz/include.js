@@ -14,7 +14,7 @@ Once you start separating your code, specially in JavaScript, in multiple files,
 usage
 --
 In order to use the __include.js__ you just have to include the include.js file.
-```js    
+```html
 <script type="text/javascript" src="include.js"></script>
 <script type="text/javascript">
     include('main', [], function() {
@@ -28,7 +28,7 @@ There are some class methods and variables which you need to know.
 
 ###include.root###
 include.root defines the root path of all the modules. the default is empty string.
-```js   
+```html
 <script type="text/javascript" src="include.js"></script>
 <script type="text/javascript">
     include.root = 'js/';
@@ -39,7 +39,7 @@ include.root defines the root path of all the modules. the default is empty stri
 ```
 ###include.cache###
 include.cache is adding extra query string to url just to trick the browser to reload the script. Default value is `true`.
-```js
+```html
 <script type="text/javascript" src="include.js"></script>
 <script type="text/javascript">
     include.cache = false;
@@ -50,7 +50,7 @@ include.cache is adding extra query string to url just to trick the browser to r
 ```
 ####include.autoRemove####
 include.autoRemove is used to remove the script tag once your script is loaded. Default value is `false`.
-```js
+```html
 <script type="text/javascript" src="include.js"></script>
 <script type="text/javascript">
     include.autoRemove = true;
@@ -61,7 +61,7 @@ include.autoRemove is used to remove the script tag once your script is loaded. 
 ```
 ####include.xlink####
 When working with SVG documents, loading script is not the usual way. include.js has a built in system to take care of that. Default value is false. Make sure `autoRemove` is `false` if you are using `xlink`.
-```js
+```html
 <script type="text/javascript" xlink:href="include.js"></script>
 <script type="text/javascript">
     include.xlink= true;
@@ -142,7 +142,7 @@ include('Module2', ['Module1'], function(Module1) {
 ```
 
 Finally we right a entry point to our app.
-```js
+```html
 <script type="text/javascript" src="include.js"></script>
 <script type="text/javascript">
     include.root = 'js/';
