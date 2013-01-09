@@ -14,123 +14,123 @@ Once you start separating your code, specially in JavaScript, in multiple files,
 usage
 --
 In order to use the __include.js__ you just have to include the include.js file.
-    
-    <script type="text/javascript" src="include.js"></script>
-    <script type="text/javascript">
-        include('main', [], function() {
-            console.log('Hello World!');
-        });
-    </script>
-
+```js    
+<script type="text/javascript" src="include.js"></script>
+<script type="text/javascript">
+    include('main', [], function() {
+        console.log('Hello World!');
+    });
+</script>
+```
 There is only one function, `include`. `include` is loading dependecies, create modules and more.
 
 There are some class methods and variables which you need to know.
 
 ###include.root###
 include.root defines the root path of all the modules. the default is empty string.
-   
-    <script type="text/javascript" src="include.js"></script>
-    <script type="text/javascript">
-        include.root = 'js/';
-        include('main', [], function() {
-            console.log('Hello World!');
-        });
-    </script>   
-
+```js   
+<script type="text/javascript" src="include.js"></script>
+<script type="text/javascript">
+    include.root = 'js/';
+    include('main', [], function() {
+        console.log('Hello World!');
+    });
+</script>   
+```
 ###include.cache###
 include.cache is adding extra query string to url just to trick the browser to reload the script. Default value is `true`.
-
-    <script type="text/javascript" src="include.js"></script>
-    <script type="text/javascript">
-        include.cache = false;
-        include('main', [], function() {
-            console.log('Hello World!');
-        });
-    </script>   
-
+```js
+<script type="text/javascript" src="include.js"></script>
+<script type="text/javascript">
+    include.cache = false;
+    include('main', [], function() {
+        console.log('Hello World!');
+    });
+</script>   
+```
 ####include.autoRemove####
 include.autoRemove is used to remove the script tag once your script is loaded. Default value is `false`.
-
-    <script type="text/javascript" src="include.js"></script>
-    <script type="text/javascript">
-        include.autoRemove = true;
-        include('main', [], function() {
-            console.log('Hello World!');
-        });
-    </script>   
-
+```js
+<script type="text/javascript" src="include.js"></script>
+<script type="text/javascript">
+    include.autoRemove = true;
+    include('main', [], function() {
+        console.log('Hello World!');
+    });
+</script>   
+```
 ####include.xlink####
 When working with SVG documents, loading script is not the usual way. include.js has a built in system to take care of that. Default value is false. Make sure `autoRemove` is `false` if you are using `xlink`.
-
-    <script type="text/javascript" xlink:href="include.js"></script>
-    <script type="text/javascript">
-        include.xlink= true;
-        include('main', [], function() {
-            console.log('Hello World!');
-        });
-    </script>   
-
+```js
+<script type="text/javascript" xlink:href="include.js"></script>
+<script type="text/javascript">
+    include.xlink= true;
+    include('main', [], function() {
+        console.log('Hello World!');
+    });
+</script>   
+```
 ####include.path([name, options], [path])####
 `path` is used to locate dependencies of each module. It must be used before defining the module if the module is depending on other modules. `path` is a function which accepts 2 function signatures.
 
 You can either define each module one at the time,
+```js    
+include.root = 'js/';
+include.path('Module1', 'mymodule/module1');
+include.path('Module2', 'mymodule/module2');
     
-    include.root = 'js/';
-    include.path('Module1', 'mymodule/module1');
-    include.path('Module2', 'mymodule/module2');
-    
-    include('Module3', ['Module1', 'Module2'], function(Module1, Module2) {
-        ...
-    });
-
+include('Module3', ['Module1', 'Module2'], function(Module1, Module2) {
+    ...
+});
+```
 or defining all of them at the same time
-
-    include.root = 'js/';
-    include.path({
-        'Module1': 'mymodule/module1',
-        'Module2': 'mymodule/module2'
-    });
+```js
+include.root = 'js/';
+include.path({
+    'Module1': 'mymodule/module1',
+    'Module2': 'mymodule/module2'
+});
     
-    include('Module3', ['Module1', 'Module2'], function(Module1, Module2) {
-        ...
-    });
-   
+include('Module3', ['Module1', 'Module2'], function(Module1, Module2) {
+    ...
+});
+```   
 as you can see `.js` doesn't require. The `include.js` library will append `.js` to your path. So behind the scene, `include.js` assembles the information about each modules. for example the `Module1` path is `js/mymodule/module1.js`.
 
 ####include.global(options)####
 global is special function which designed to load frameworks like `jQuery`, `underscore.js`, `Backbone.js` or any frameworks or modules which are not using include.js as a primary way of defining the module. if you find/know a framework which uses `window` object to register itself as a global variable,then you need to use the `global` function to load it with include. Since the include has no clue of finding dependencies of each module, it is a user responsibility to let the include.js know.
 
 for example we want to load Backbone.js. let's just assume that backbone.js, jquery.js and underscore.js are store the following path `js/vendor/`.
+```js
+include.root = 'js/';
+include.global({
+    'jQuery': 'vendor/jquery',
+    '_': 'vendor/underscore',
+    'Backbone': {
+        path: 'vendor/backbone',
+        deps: ['jQuery', '_']
+    }
+});
 
-    include.root = 'js/';
-    include.global({
-        'jQuery': 'vendor/jquery',
-        '_': 'vendor/underscore',
-        'Backbone': {
-            path: 'vendor/backbone',
-            deps: ['jQuery', '_']
-        }
-    });
-
-    include('Module4', ['Backbone'], function(Backbone) {
-        ...
-    });
-
+include('Module4', ['Backbone'], function(Backbone) {
+    ...
+});
+```
 as you may notice, the name of each framework must be the same as register object in window object. for example, jquery register itself to window object as `jQuery`. so if you type `window['jQuery`]` it means the same name as `$`. it is similar to `underscore` as well. underscore register itself to `window` object as `_`.
 
 ####include(name, dependencies, function)####
 This function is the heart of `include.js` library. It defines the modules by a given name, dependencies and a function to execute. <br/>__REMEMBER__ to return an something since it assign to name of your module. for example
 
 in module1 file which located in `js/mymodule/module1.js` we are going to define a module.
-
-    include('Module1', [], function() {
-        var myMessage = 'Hello ';
+```js
+include('Module1', [], function() {
+    var myMessage = 'Hello ';
         
-        return {
-            message: myMessage
-        };
-    });
-
+    return {
+        message: myMessage
+    };
+});
+```
 and module2 file depends on module1 as follow
 ```js
 include.path('Module1', 'mymodule/module1');
@@ -142,16 +142,16 @@ include('Module2', ['Module1'], function(Module1) {
 ```
 
 Finally we right a entry point to our app.
-
-    <script type="text/javascript" src="include.js"></script>
-    <script type="text/javascript">
-        include.root = 'js/';
-        include.path('Module2', 'mymodule/module2');
-        include('myapp', ['Module2'], function(Module2) {
-            console.log(Module2.message);
-        });
-    </script>
-
+```js
+<script type="text/javascript" src="include.js"></script>
+<script type="text/javascript">
+    include.root = 'js/';
+    include.path('Module2', 'mymodule/module2');
+    include('myapp', ['Module2'], function(Module2) {
+        console.log(Module2.message);
+    });
+</script>
+```
 License
 --
 Copyright (c) 2013 Ali Najafizadeh
