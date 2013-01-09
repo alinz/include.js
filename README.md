@@ -132,13 +132,14 @@ in module1 file which located in `js/mymodule/module1.js` we are going to define
     });
 
 and module2 file depends on module1 as follow
-
-    include.path('Module1', 'mymodule/module1');
-    include('Module2', ['Module1'], function(Module1) {
-        return {
-            message: Module1.mesage + 'World!'
-        };
-    });
+```js
+include.path('Module1', 'mymodule/module1');
+include('Module2', ['Module1'], function(Module1) {
+    return {
+        message: Module1.mesage + 'World!'
+    };
+});
+```
 
 Finally we right a entry point to our app.
 
