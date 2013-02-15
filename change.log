@@ -1,0 +1,6 @@
+version 1.0.1
+	minor bug fixed
+	added a new feature include.status which can tell you which file is being loaded and how many files are still remaining.
+
+version 1.0.0
+	First Public Release
