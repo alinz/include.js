@@ -152,6 +152,18 @@ Finally we right a entry point to our app.
     });
 </script>
 ```
+
+New feature added as of `version 1.0.1`
+this feature is a fucntion `include.status` which tells the progress of loading the files. once a module being loaded this function will be called.
+There is only one argument `options` which has the following properties:
+
+`filename`: which show the complete path to the loading module
+`name`: which indicates the name of the module
+`status`: which always will be `loaded`. This property will be change later in future.
+`remaining`: which indicates how many files wtill remaning to be loaded.
+
+
+
 License
 --
 Copyright (c) 2013 Ali Najafizadeh
