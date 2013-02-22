@@ -1,5 +1,5 @@
 /* include.js: Light and Simple dependency manager in JavaScript.
- * version: 0.1.1
+ * version: 1.1.0
  * Author Ali Najafizadeh
  * MIT Licensed.
  */
@@ -30,7 +30,7 @@ var include = (function () {
          * if target is an object the function callback will have the following signiture
          *     function (name, value)
          */
-         each = function (target, fn) {
+        each = function (target, fn) {
             var i;
             if (target instanceof Array) {
                 if (target && target.length > 0) {
@@ -147,7 +147,7 @@ var include = (function () {
     function implInclude(name, req, callback) {
         var index = 0,
             len = req.length,
-            isGlobal = srcPath[name] && srcPath[name].global;
+            isGlobal = srcPath[name] && srcPath[name].isGlobal;
 
         remaining += len;
 
@@ -186,11 +186,12 @@ var include = (function () {
 
         each(req, function (item) {
             Notify.on(item, countReq);
-
-            if (!!srcPath[item].global) {
-                if (srcPath[item].deps && srcPath[item].deps.length > 0) {
-                    implInclude(item, srcPath[item].deps, function () {
-                        return window[item];
+            var obj = srcPath[item];
+            if (!!obj.isGlobal) {
+                if (obj.deps && obj.deps.length > 0) {
+                    implInclude(item, obj.deps, function () {
+                        var globalName = obj.global;
+                        return window[globalName];
                     });
                 } else {
                     loadScript(item, function () {
@@ -206,12 +207,66 @@ var include = (function () {
 
     implInclude.autoRemove = false;
     implInclude.xlink = false;
+
+    /**
+     * global class method
+     * this method is responsible to load non include libraries and modules.
+     * options must be an object. each key to that object represent a name of each module.
+     * for example, let's try to define jQuery. by default jQuery is not include compatible.
+     * what we can do is to use global class method as follow.
+     *
+     * include.global({
+     *      'jQuery': '../jquery.js'
+     * });
+     *
+     * since jQuery register itself to window object by the key name jQuery, the include use that ifnormation
+     * to retrieve the jQuery object. HOWEVER, you might want to load jQuery mobile or jQuery UI or any type of
+     * jQuery plugin. then what should we do???
+     *
+     * the answer is simple as eating a donut. what you need to do is to use the following code.
+     *
+     * include.global({
+     *     'jQuery': '../jquery.js',
+     *     'jQuery-UI': {
+     *          path: '../jquery-ui.js',
+     *          deps: ['jQuery'],
+     *          global: 'jQuery'
+     *     }
+     * });
+     *
+     * so now, jQuery-UI is dependent on jQuery and the global variable is going to be the same as jQuery.
+     *
+     *
+     * so here's one of my project which requires Backbone, jQuery and jQuery-UI.
+     *
+     * include.root = 'js/';
+     * include.global({
+     *      'jQuery': 'vendor/jquery-1.9.1.min',
+     *      'jQuery-UI': {
+     *          path: 'vendor/jquery-ui-1.10.1.min',
+     *          deps: ['jQuery'],
+     *          global: 'jQuery'
+     *      },
+     *      'Underscore': {
+     *          path: 'vendor/underscore-1.4.4.min',
+     *          global: '_'
+     *      },
+     *      'Backbone': {
+     *          path: 'vendor/backbone-0.9.10.min',
+     *          deps: ['Underscore', 'Backbone']
+     *      }
+     * });
+     *
+     * @param options { <string>: <string | { path: <string>, deps: <array>, global: <string> }> }
+     */
     implInclude.global = function (options) {
         each(options, function (name, value) {
             if ('string' !== typeof value) {
-                srcPath[name] = { path: value.path, deps: value.deps, global: true };
+                var deps = (value.deps)? value.deps : [];
+                var globalName = (value.global)? value.global : name;
+                srcPath[name] = { path: value.path, deps: deps, isGlobal: true, global: globalName };
             } else {
-                srcPath[name] = { path: value, deps: [], global: true };
+                srcPath[name] = { path: value, deps: [], isGlobal: true, global: name };
             }
         });
     };
@@ -240,7 +295,7 @@ var include = (function () {
      */
     implInclude.status = function (options) {};
 
-    implInclude.VERSION = '1.0.1';
+    implInclude.VERSION = '1.1.0';
 
     return implInclude;
 }());
