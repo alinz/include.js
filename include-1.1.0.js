@@ -1,5 +1,5 @@
 /* include.js: Light and Simple dependency manager in JavaScript.
- * version: 1.1.0
+ * version: 1.1.1
  * Author Ali Najafizadeh
  * MIT Licensed.
  */
@@ -295,7 +295,7 @@ var include = (function () {
      */
     implInclude.status = function (options) {};
 
-    implInclude.VERSION = '1.1.0';
+    implInclude.VERSION = '1.1.1';
 
     return implInclude;
 }());
