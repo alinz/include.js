@@ -1,5 +1,5 @@
 /* include.js: Light and Simple dependency manager in JavaScript.
- * version: 1.1.1
+ * version: 1.1.2
  * Author Ali Najafizadeh
  * MIT Licensed.
  */
@@ -8,7 +8,7 @@ var include = (function () {
 
     var loadedModules = {},
         srcPath = {},
-        remaining = 0,
+        remaining = -1,
         checkSrcPath = function (name, path) {
             if (srcPath[name] && srcPath[name].path !== path) {
                 throw 'Duplicate source name [' + name + ', ' + srcPath[name] + ']';
@@ -140,6 +140,9 @@ var include = (function () {
                     each(fns, function (item) {
                         asynCall(item);
                     });
+                },
+                available: function (name) {
+                    return !!events[name];
                 }
             };
         }());
@@ -149,7 +152,14 @@ var include = (function () {
             len = req.length,
             isGlobal = srcPath[name] && srcPath[name].isGlobal;
 
-        remaining += len;
+        //checking whether the module is being queued or already loaded.
+        //before increasing remaining.
+        for(var i = 0; i < req.length; i++) {
+            var moduleName = req[i];
+            if(!loadedModules[moduleName] && !Notify.available(moduleName)) {
+                remaining++;
+            }
+        }
 
         if (!len) {
             if (isGlobal) {
@@ -295,7 +305,7 @@ var include = (function () {
      */
     implInclude.status = function (options) {};
 
-    implInclude.VERSION = '1.1.1';
+    implInclude.VERSION = '1.1.2';
 
     return implInclude;
 }());
