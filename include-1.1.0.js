@@ -30,7 +30,7 @@ var include = (function () {
          * if target is an object the function callback will have the following signiture
          *     function (name, value)
          */
-        each = function (target, fn) {
+            each = function (target, fn) {
             var i;
             if (target instanceof Array) {
                 if (target && target.length > 0) {
@@ -188,14 +188,14 @@ var include = (function () {
             Notify.on(item, countReq);
             var obj = srcPath[item];
             if (!!obj.isGlobal) {
+                var globalName = obj.global;
                 if (obj.deps && obj.deps.length > 0) {
                     implInclude(item, obj.deps, function () {
-                        var globalName = obj.global;
                         return window[globalName];
                     });
                 } else {
                     loadScript(item, function () {
-                        loadedModules[item] = window[item];
+                        loadedModules[item] = window[globalName];
                         Notify.trigger(item);
                     });
                 }
