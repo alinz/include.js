@@ -8,7 +8,7 @@ var include = (function () {
 
     var loadedModules = {},
         srcPath = {},
-        remaining = -1,
+        remaining = 0,
         checkSrcPath = function (name, path) {
             if (srcPath[name] && srcPath[name].path !== path) {
                 throw 'Duplicate source name [' + name + ', ' + srcPath[name] + ']';
